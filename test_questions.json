@@ -1,0 +1,52 @@
+﻿{
+  "test_suite": [
+    {
+      "id": 1,
+      "question": "How many annual leave days do employees get?",
+      "expected_answer": "14 days",
+      "type": "exists"
+    },
+    {
+      "id": 2,
+      "question": "What are the standard work hours?",
+      "expected_answer": "9 AM to 5 PM",
+      "type": "exists"
+    },
+    {
+      "id": 3,
+      "question": "What is the remote work policy?",
+      "expected_answer": "not found",
+      "type": "not_exists"
+    },
+    {
+      "id": 4,
+      "question": "Can sick days be carried over?",
+      "expected_answer": "No",
+      "type": "exists"
+    },
+    {
+      "id": 5,
+      "question": "What is the CEO's email?",
+      "expected_answer": "not found",
+      "type": "not_exists"
+    },
+    {
+      "id": 6,
+      "question": "After how many years get 14 days leave?",
+      "expected_answer": "One year",
+      "type": "exists"
+    },
+    {
+      "id": 7,
+      "question": "What benefits are mentioned?",
+      "expected_answer": "Annual and sick leave",
+      "type": "multiple_chunks"
+    },
+    {
+      "id": 8,
+      "question": "Are part-time policies different?",
+      "expected_answer": "Yes",
+      "type": "exists"
+    }
+  ]
+}

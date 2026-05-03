@@ -2,7 +2,7 @@
 
 ## 🎯 Project Overview
 
-A complete Retrieval-Augmented Generation (RAG) system backend that allows document upload, vector search, and intelligent question answering. Built as a take-home assignment.
+A complete Retrieval-Augmented Generation (RAG) system backend that allows document upload, vector search, and intelligent question answering.
 
 **Tech Stack:** FastAPI, FAISS, Ollama (all-minilm), Python 3.11
 
@@ -49,6 +49,15 @@ A complete Retrieval-Augmented Generation (RAG) system backend that allows docum
 - Sentence boundary preservation improves chunk quality
 
 ---
+## 📡 API Endpoints
+
+| Method | Endpoint | Description | Parameters |
+|--------|----------|-------------|------------|
+| **POST** | `/documents/upload` | Upload a PDF or TXT document | `file` (multipart/form-data) |
+| **GET** | `/documents` | List all uploaded documents | None |
+| **GET** | `/documents/stats` | Get vector database statistics | None |
+| **DELETE** | `/documents/{document_id}` | Delete a document and its chunks | `document_id` (path parameter) |
+| **POST** | `/chat/query` | Ask a question | `question` (required), `top_k` (optional, default: 5) |
 
 ## 🚀 Quick Start
 
@@ -56,6 +65,10 @@ A complete Retrieval-Augmented Generation (RAG) system backend that allows docum
 
 - Python 3.9 or higher
 - Ollama installed (for embeddings) - https://ollama.com
+
+ Server runs at: http://localhost:3000
+ 
+ API Docs (Swagger UI): http://localhost:3000/docs
 
 ### Installation Steps
 
@@ -81,32 +94,4 @@ ollama serve
 # 6. Start the server
 python main.py
 
-Server runs at: http://localhost:3000
 
-API Docs (Swagger UI): http://localhost:3000/docs
-
-## 📡 API Endpoints
-
-| Method | Endpoint | Description | Parameters |
-|:------:|----------|-------------|------------|
-| **POST** | `/documents/upload` | Upload a PDF or TXT document | `file` (multipart/form-data) |
-| **GET** | `/documents` | List all uploaded documents | None |
-| **GET** | `/documents/stats` | Get vector database statistics | None |
-| **DELETE** | `/documents/{document_id}` | Delete a document and its chunks | `document_id` (path parameter) |
-| **POST** | `/chat/query` | Ask a question based on uploaded documents | `question` (string, required)<br>`top_k` (integer, optional, default: 5) |
-
-### Parameter Details
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `file` | File | Yes | - | The PDF or TXT file to upload |
-| `document_id` | String | Yes | - | Unique identifier of the document |
-| `question` | String | Yes | - | User's question about the documents |
-| `top_k` | Integer | No | 5 | Number of relevant chunks to retrieve |
-
-### Example Requests
-
-#### Upload a Document
-```bash
-curl -X POST http://localhost:3000/documents/upload \
-  -F "file=@handbook.txt"

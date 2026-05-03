@@ -84,11 +84,29 @@ python main.py
 Server runs at: http://localhost:3000
 
 API Docs (Swagger UI): http://localhost:3000/docs
-📡 API Endpoints
-Method	Endpoint	Description	Parameters
-POST	/documents/upload	Upload PDF/TXT file	file (multipart form-data)
-GET	/documents	List all documents	None
-GET	/documents/stats	Vector database statistics	None
-DELETE	/documents/{document_id}	Delete a document	document_id (path parameter)
-POST	/chat/query	Ask a question	question, top_k (optional, default 5)
 
+## 📡 API Endpoints
+
+| Method | Endpoint | Description | Parameters |
+|:------:|----------|-------------|------------|
+| **POST** | `/documents/upload` | Upload a PDF or TXT document | `file` (multipart/form-data) |
+| **GET** | `/documents` | List all uploaded documents | None |
+| **GET** | `/documents/stats` | Get vector database statistics | None |
+| **DELETE** | `/documents/{document_id}` | Delete a document and its chunks | `document_id` (path parameter) |
+| **POST** | `/chat/query` | Ask a question based on uploaded documents | `question` (string, required)<br>`top_k` (integer, optional, default: 5) |
+
+### Parameter Details
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `file` | File | Yes | - | The PDF or TXT file to upload |
+| `document_id` | String | Yes | - | Unique identifier of the document |
+| `question` | String | Yes | - | User's question about the documents |
+| `top_k` | Integer | No | 5 | Number of relevant chunks to retrieve |
+
+### Example Requests
+
+#### Upload a Document
+```bash
+curl -X POST http://localhost:3000/documents/upload \
+  -F "file=@handbook.txt"

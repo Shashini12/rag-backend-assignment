@@ -1,9 +1,5 @@
-# Stop the server if running
-
-# Create complete main.py with chat endpoint
-
 """
-RAG Backend System - Complete with FAISS, Ollama Embeddings, and Chat
+RAG Backend System - Complete with FAISS, Ollama Embeddings, Chat, and DELETE
 """
 
 import os
@@ -32,7 +28,7 @@ documents_db = {}
 index = None
 chunks_storage = []
 
-# FAISS index file path
+# FAISS index file paths
 FAISS_INDEX_PATH = "faiss_index/index.faiss"
 METADATA_PATH = "faiss_index/metadata.pkl"
 
@@ -203,6 +199,58 @@ async def get_stats():
         "total_chunks_in_index": len(chunks_storage),
         "documents_uploaded": len(documents_db),
         "index_size": index.ntotal if index else 0
+    }
+
+@app.delete("/documents/{document_id}")
+async def delete_document(document_id: str):
+    """
+    Delete a document and all its chunks from the system
+    """
+    global index, chunks_storage
+    
+    # Check if document exists
+    if document_id not in documents_db:
+        raise HTTPException(404, f"Document {document_id} not found")
+    
+    # Delete the physical file
+    file_path = documents_db[document_id].get("filePath")
+    if file_path and os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"✅ Deleted file: {file_path}")
+    
+    # Remove from metadata
+    doc_info = documents_db.pop(document_id)
+    print(f"✅ Removed document: {document_id}")
+    
+    # Remove chunks from storage
+    original_count = len(chunks_storage)
+    chunks_storage = [c for c in chunks_storage if c["documentId"] != document_id]
+    removed_count = original_count - len(chunks_storage)
+    print(f"✅ Removed {removed_count} chunks from storage")
+    
+    # Rebuild FAISS index with remaining chunks
+    dimension = 384
+    index = faiss.IndexFlatIP(dimension)
+    
+    if chunks_storage:
+        embeddings_list = []
+        for chunk in chunks_storage:
+            embedding = get_embedding(chunk["text"])
+            embeddings_list.append(embedding)
+        
+        if embeddings_list:
+            embeddings_array = np.array(embeddings_list).astype('float32')
+            index.add(embeddings_array)
+            print(f"✅ Rebuilt index with {len(embeddings_list)} chunks")
+    
+    # Save the updated index
+    save_index()
+    
+    return {
+        "message": f"Document {document_id} deleted successfully",
+        "chunks_removed": removed_count,
+        "remaining_chunks": len(chunks_storage),
+        "remaining_documents": len(documents_db)
     }
 
 @app.post("/chat/query")

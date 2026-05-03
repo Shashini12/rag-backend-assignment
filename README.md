@@ -1,4 +1,3 @@
-@'
 # RAG Backend System - Document QA Assistant
 
 ## 🎯 Project Overview
